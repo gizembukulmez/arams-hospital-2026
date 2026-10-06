@@ -1,0 +1,486 @@
+# Nav2 params for the ARAMS hospital world, TurtleBot3 Burger, ROS 2 Jazzy.
+#
+# Base structure and several values (laser_max_range, base_frame_id,
+# controller_frequency, DWB tuning, the bt_navigator navigators: schema,
+# collision_monitor) come from the course's own Jazzy+Webots lab material,
+# which is instructor-verified for this exact setup and catches pitfalls a
+# generic template wouldn't:
+#   - enable_stamped_cmd_vel: true is required, not optional, since this
+#     project's /cmd_vel is TwistStamped on Jazzy (arams_challenge_launch.py
+#     remaps the driver's stamped output). Without it Nav2 plans fine but
+#     the robot never moves.
+#   - bt_navigator must NOT have a plugin_lib_names list on Jazzy: built-in
+#     BT plugins autoload, and adding one causes a double-registration
+#     segfault.
+#
+# max_vel_x / max_speed_xy / velocity_smoother.max_velocity[0] are 0.2, not
+# the lab's 0.26 or generic tutorials' 0.22, since this project's own
+# webots_ros2_turtlebot/resource/ros2control.yml hard-caps the
+# diffdrive_controller at linear.x.max_velocity: 0.2.
+#
+# robot_radius is 0.1, not the lab's 0.22 (that's the Waffle radius in most
+# generic Nav2 tutorials). 0.1 matches the official Burger spec (~0.105 m)
+# and the vendored, Cyberbotics-authored
+# webots_ros2_turtlebot/resource/nav2_params.yaml, built specifically for
+# this Burger model.
+
+amcl:
+    ros__parameters:
+        use_sim_time: true
+        # Webots' diffdrive odometry has no wheel slip/backlash, unlike the
+        # real-robot alpha values (0.2 each) these came from; a tighter
+        # motion model keeps the particle filter from carrying more spread
+        # than this sim actually produces.
+        alpha1: 0.05
+        alpha2: 0.05
+        alpha3: 0.05
+        alpha4: 0.05
+        alpha5: 0.05
+        base_frame_id: "base_link"
+        beam_skip_distance: 0.5
+        beam_skip_error_threshold: 0.9
+        beam_skip_threshold: 0.3
+        do_beamskip: false
+        global_frame_id: "map"
+        lambda_short: 0.1
+        laser_likelihood_max_dist: 2.0
+        laser_max_range: 3.5
+        laser_min_range: -1.0
+        laser_model_type: "likelihood_field"
+        max_beams: 60
+        max_particles: 2000
+        min_particles: 500
+        odom_frame_id: "odom"
+        pf_err: 0.05
+        pf_z: 0.99
+        # Nav2's own stock defaults, not 0.0: augmented-MCL recovery was
+        # fully disabled here with no comment explaining why. Without it a
+        # confidently-wrong convergence has no way to self-correct.
+        recovery_alpha_fast: 0.1
+        recovery_alpha_slow: 0.001
+        resample_interval: 1
+        robot_model_type: "nav2_amcl::DifferentialMotionModel"
+        save_pose_rate: 0.5
+        sigma_hit: 0.2
+        tf_broadcast: true
+        transform_tolerance: 1.0
+        # Tightened from the stock 0.2 rad / 0.25 m: at the old thresholds
+        # AMCL could go a quarter meter or ~11.5 deg of rotation without a
+        # laser correction, which is the entire margin budget at a doorway.
+        update_min_a: 0.1
+        update_min_d: 0.1
+        # 0.7, not the stock 0.5: weights the laser sensor model to trust a
+        # clean hit against the map more decisively. Combined with the
+        # tightened update_min_a above, this converges the pose estimate
+        # faster per scan, cutting down on the estimate jitter that was
+        # showing up as repeated small corrections mid-turn.
+        z_hit: 0.7
+        z_max: 0.05
+        z_rand: 0.7
+        z_short: 0.05
+        scan_topic: scan
+        # Recorded via `tf2_echo map base_link` right at spawn, before
+        # driving anywhere (tight covariance, stable across repeats). The
+        # robot spawns at the same fixed pose every run, so this holds
+        # across launches.
+        set_initial_pose: true
+        initial_pose:
+            x: -1.827
+            y: -12.205
+            yaw: 0.272
+
+bt_navigator:
+    ros__parameters:
+        use_sim_time: true
+        global_frame: map
+        robot_base_frame: base_link
+        odom_topic: /odom
+        bt_loop_duration: 10
+        default_server_timeout: 20
+        action_server_result_timeout: 900.0
+        # Jazzy: built-in BT plugins load automatically. Do NOT add a
+        # plugin_lib_names list here (double registration -> segfault).
+        navigators: ["navigate_to_pose", "navigate_through_poses"]
+        navigate_to_pose:
+            plugin: "nav2_bt_navigator::NavigateToPoseNavigator"
+        navigate_through_poses:
+            plugin: "nav2_bt_navigator::NavigateThroughPosesNavigator"
+        error_code_names:
+            - compute_path_error_code
+            - follow_path_error_code
+
+controller_server:
+    ros__parameters:
+        use_sim_time: true
+        # Required: this project's /cmd_vel is TwistStamped on Jazzy.
+        enable_stamped_cmd_vel: true
+        controller_frequency: 20.0
+        min_x_velocity_threshold: 0.001
+        min_y_velocity_threshold: 0.5
+        min_theta_velocity_threshold: 0.001
+        failure_tolerance: 0.3
+        progress_checker_plugin: "progress_checker"
+        goal_checker_plugins: ["general_goal_checker"]
+        controller_plugins: ["FollowPath"]
+
+        progress_checker:
+            plugin: "nav2_controller::SimpleProgressChecker"
+            required_movement_radius: 0.5
+            movement_time_allowance: 10.0
+
+        general_goal_checker:
+            stateful: true
+            plugin: "nav2_controller::SimpleGoalChecker"
+            xy_goal_tolerance: 0.25
+            # 0.4, not the tighter 0.25: AMCL re-localizes on every small
+            # angular step (update_min_a: 0.1), so a large in-place turn
+            # (e.g. the ~102 deg pinboard-approach turn) sees its heading
+            # estimate jitter slightly mid-spin. At 0.25 the goal checker
+            # kept flip-flopping between "close enough" and "not yet" as
+            # that estimate wobbled, so DWB corrected, eased off, and
+            # corrected again instead of completing the turn once. 0.4
+            # gives enough slack to absorb that jitter without one extra
+            # correction cycle, at the cost of a looser final heading.
+            yaw_goal_tolerance: 0.4
+
+        FollowPath:
+            plugin: "dwb_core::DWBLocalPlanner"
+            debug_trajectory_details: true
+            min_vel_x: 0.0
+            min_vel_y: 0.0
+            # 0.2, not 0.22/0.26 - matches this project's own
+            # diffdrive_controller.linear.x.max_velocity cap.
+            max_vel_x: 0.2
+            max_vel_y: 0.0
+            # 1.5, not the stock 1.0: the pinboard-approach pose needs a
+            # ~102 deg near-in-place turn, and the Burger's real ceiling is
+            # ~2.84 rad/s (see teleop_joy's max_angular), so there's margin
+            # to move faster without pushing hardware limits.
+            max_vel_theta: 1.5
+            min_speed_xy: 0.0
+            max_speed_xy: 0.2
+            min_speed_theta: 0.0
+            acc_lim_x: 2.5
+            acc_lim_y: 0.0
+            acc_lim_theta: 3.2
+            decel_lim_x: -2.5
+            decel_lim_y: 0.0
+            decel_lim_theta: -3.2
+            # 30, not the stock 20 (vx and vtheta): a finer grid of candidate
+            # velocities for DWB to score each cycle, so the commanded speed
+            # changes more continuously between control ticks instead of
+            # stepping between coarser options. Scores against the same
+            # costmap and critics as before, so it doesn't change which
+            # trajectories are considered safe, only which safe one wins.
+            vx_samples: 30
+            vy_samples: 5
+            vtheta_samples: 30
+            sim_time: 1.7
+            linear_granularity: 0.05
+            angular_granularity: 0.025
+            transform_tolerance: 0.2
+            xy_goal_tolerance: 0.25
+            # Must stay below max_vel_x/max_speed_xy (0.2) or the robot can
+            # never exceed this and RotateToGoal treats it as "stopped"
+            # even mid-transit, not just at the goal.
+            trans_stopped_velocity: 0.05
+            short_circuit_trajectory_evaluation: true
+            stateful: true
+            critics: ["RotateToGoal", "Oscillation", "BaseObstacle", "GoalAlign", "PathAlign", "PathDist", "GoalDist"]
+            BaseObstacle.scale: 0.02
+            PathAlign.scale: 32.0
+            PathAlign.forward_point_distance: 0.1
+            GoalAlign.scale: 24.0
+            GoalAlign.forward_point_distance: 0.1
+            PathDist.scale: 32.0
+            GoalDist.scale: 24.0
+            RotateToGoal.scale: 32.0
+            # 2.5, not the stock tutorial's 5.0: at 5.0 the penalty for
+            # "not decelerating enough yet" and the score for "keep turning"
+            # land close enough, near a large in-place rotation, that small
+            # cycle-to-cycle noise in DWB's per-tick re-sampling flips which
+            # one wins, so it turns, eases off, turns again. A gentler slowing
+            # penalty should let it commit to one direction instead of
+            # hunting; yaw_goal_tolerance (0.25 rad) still bounds how loose
+            # the final heading can end up.
+            RotateToGoal.slowing_factor: 2.5
+            # -1.0 (the stock default) projects heading error sim_time
+            # (1.7s) ahead, which is nearly the whole ~1.79 rad turn to
+            # face the pinboard, so DWB starts tapering angular speed almost
+            # immediately instead of only near the end, making a large
+            # turn crawl. 0.6s decouples the braking horizon from sim_time;
+            # paired with max_vel_theta 1.5, stopping distance at full
+            # speed is ~0.35 rad against a 0.6*1.5=0.9 rad lookahead
+            # window, leaving margin against overshoot.
+            RotateToGoal.lookahead_time: 0.6
+
+local_costmap:
+    local_costmap:
+        ros__parameters:
+            use_sim_time: true
+            # 8.0, not the stock 5.0: the walking nurse is a moving
+            # obstacle, and a slower-refreshing local costmap gives less
+            # lead time to react before she's already close.
+            update_frequency: 8.0
+            publish_frequency: 2.0
+            global_frame: odom
+            robot_base_frame: base_link
+            rolling_window: true
+            width: 3
+            height: 3
+            resolution: 0.05
+            robot_radius: 0.1
+            plugins: ["voxel_layer", "inflation_layer"]
+            inflation_layer:
+                plugin: "nav2_costmap_2d::InflationLayer"
+                # The open door panel itself (mapped standing ~90° off the
+                # wall, per the mapping instructions) narrows the real
+                # clear gap at every doorway well below the nominal opening
+                # width. A higher cost_scaling_factor makes cost fall off
+                # faster with distance from an obstacle, keeping the
+                # inflated "halo" concentrated close to the panel/frame
+                # instead of bleeding across the whole remaining gap.
+                cost_scaling_factor: 6.0
+                # 0.25 erased the zero-cost centerline at the narrowest
+                # doorway (measured ~0.5 m clear gap); 0.15 overcorrected,
+                # thinning the margin everywhere else for no measured
+                # benefit. 0.20 leaves ~0.1 m of true zero-cost centerline
+                # at the tightest doorway while keeping a healthier margin
+                # elsewhere.
+                inflation_radius: 0.20
+            voxel_layer:
+                plugin: "nav2_costmap_2d::VoxelLayer"
+                enabled: true
+                publish_voxel_map: true
+                origin_z: 0.0
+                z_resolution: 0.05
+                z_voxels: 16
+                max_obstacle_height: 2.0
+                mark_threshold: 0
+                observation_sources: scan
+                scan:
+                    topic: /scan
+                    max_obstacle_height: 2.0
+                    clearing: true
+                    marking: true
+                    data_type: "LaserScan"
+                    raytrace_max_range: 3.0
+                    raytrace_min_range: 0.0
+                    # Matches raytrace_max_range now: at the old 2.5, a
+                    # 2.5-3.0m band existed where a scan could clear a stale
+                    # obstacle mark but never register a new one, giving less
+                    # lead time to notice a fast-approaching moving obstacle
+                    # (the walking nurse) than the sensor's own range allows.
+                    obstacle_max_range: 3.0
+                    obstacle_min_range: 0.0
+            static_layer:
+                plugin: "nav2_costmap_2d::StaticLayer"
+                map_subscribe_transient_local: true
+            always_send_full_costmap: true
+
+global_costmap:
+    global_costmap:
+        ros__parameters:
+            use_sim_time: true
+            # 3.0, not the stock 1.0: at 1Hz, a door that just opened (or
+            # costmap data right after Nav2 activates, before any scans have
+            # accumulated) can stay stale for up to a second, long enough
+            # for the planner to reject a route that's actually clear.
+            update_frequency: 3.0
+            publish_frequency: 1.0
+            global_frame: map
+            robot_base_frame: base_link
+            robot_radius: 0.1
+            resolution: 0.05
+            track_unknown_space: true
+            plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
+            obstacle_layer:
+                plugin: "nav2_costmap_2d::ObstacleLayer"
+                enabled: true
+                observation_sources: scan
+                scan:
+                    topic: /scan
+                    max_obstacle_height: 2.0
+                    clearing: true
+                    marking: true
+                    data_type: "LaserScan"
+                    raytrace_max_range: 3.0
+                    raytrace_min_range: 0.0
+                    obstacle_max_range: 2.5
+                    obstacle_min_range: 0.0
+            static_layer:
+                plugin: "nav2_costmap_2d::StaticLayer"
+                map_subscribe_transient_local: true
+            inflation_layer:
+                plugin: "nav2_costmap_2d::InflationLayer"
+                # See local_costmap's inflation_layer comment: same fix,
+                # same reason (the open door panel narrows the real clear
+                # gap at every doorway below the nominal opening width).
+                cost_scaling_factor: 6.0
+                inflation_radius: 0.20
+            always_send_full_costmap: true
+
+map_server:
+    ros__parameters:
+        use_sim_time: true
+        yaml_filename: "hospital_map.yaml"
+
+map_saver:
+    ros__parameters:
+        use_sim_time: true
+        save_map_timeout: 5.0
+        free_thresh_default: 0.25
+        occupied_thresh_default: 0.65
+        map_subscribe_transient_local: true
+
+planner_server:
+    ros__parameters:
+        use_sim_time: true
+        expected_planner_frequency: 20.0
+        planner_plugins: ["GridBased"]
+        GridBased:
+            plugin: "nav2_navfn_planner::NavfnPlanner"
+            tolerance: 0.5
+            use_astar: false
+            allow_unknown: true
+
+smoother_server:
+    ros__parameters:
+        use_sim_time: true
+        smoother_plugins: ["simple_smoother"]
+        simple_smoother:
+            plugin: "nav2_smoother::SimpleSmoother"
+            tolerance: 1.0e-10
+            max_its: 1000
+            do_refinement: true
+
+behavior_server:
+    ros__parameters:
+        use_sim_time: true
+        # Required: this project's /cmd_vel is TwistStamped on Jazzy.
+        enable_stamped_cmd_vel: true
+        costmap_topic: local_costmap/costmap_raw
+        footprint_topic: local_costmap/published_footprint
+        cycle_frequency: 10.0
+        behavior_plugins: ["spin", "backup", "drive_on_heading", "assisted_teleop", "wait"]
+        spin:
+            plugin: "nav2_behaviors::Spin"
+        backup:
+            plugin: "nav2_behaviors::BackUp"
+        drive_on_heading:
+            plugin: "nav2_behaviors::DriveOnHeading"
+        wait:
+            plugin: "nav2_behaviors::Wait"
+        assisted_teleop:
+            plugin: "nav2_behaviors::AssistedTeleop"
+        global_frame: odom
+        robot_base_frame: base_link
+        transform_tolerance: 0.1
+        simulate_ahead_time: 2.0
+        max_rotational_vel: 1.0
+        min_rotational_vel: 0.4
+        rotational_acc_lim: 3.2
+
+docking_server:
+    ros__parameters:
+        use_sim_time: true
+        # nav2_bringup manages this node regardless of whether it's listed
+        # in lifecycle_manager_navigation.node_names above (it appears to
+        # hardcode its own managed-node list); this project has no docking
+        # hardware/behavior and never calls it, but it still needs to
+        # configure successfully or it aborts the whole bringup. It also
+        # requires at least one real dock_plugins entry (an empty list
+        # isn't accepted); this is the stock nav2_bringup default plugin
+        # config, unused since we never define any `docks:` instances or
+        # call the docking action.
+        enable_stamped_cmd_vel: true
+        base_frame: "base_link"
+        fixed_frame: "odom"
+        dock_plugins: ['simple_charging_dock']
+        simple_charging_dock:
+            plugin: 'opennav_docking::SimpleChargingDock'
+
+velocity_smoother:
+    ros__parameters:
+        use_sim_time: true
+        # Required: this project's /cmd_vel is TwistStamped on Jazzy.
+        enable_stamped_cmd_vel: true
+        smoothing_frequency: 20.0
+        scale_velocities: false
+        feedback: "OPEN_LOOP"
+        # theta axis matches FollowPath's max_vel_theta (1.5); this sits
+        # downstream of DWB in the cmd_vel pipeline and would otherwise
+        # silently clamp its commands back down.
+        max_velocity: [0.2, 0.0, 1.5]
+        min_velocity: [-0.2, 0.0, -1.5]
+        max_accel: [2.5, 0.0, 3.2]
+        max_decel: [-2.5, 0.0, -3.2]
+        odom_topic: "odom"
+        odom_duration: 0.1
+        deadband_velocity: [0.0, 0.0, 0.0]
+        velocity_timeout: 1.0
+
+collision_monitor:
+    ros__parameters:
+        use_sim_time: true
+        # Required: velocity_smoother publishes cmd_vel_smoothed as
+        # TwistStamped (its own enable_stamped_cmd_vel is true); without
+        # this flag collision_monitor tries to subscribe as plain Twist,
+        # which is a hard type mismatch on the same topic name and crashes
+        # collision_monitor's configure() step, aborting the whole
+        # lifecycle_manager_navigation bringup.
+        enable_stamped_cmd_vel: true
+        base_frame_id: "base_link"
+        odom_frame_id: "odom"
+        cmd_vel_in_topic: "cmd_vel_smoothed"
+        cmd_vel_out_topic: "cmd_vel"
+        state_topic: "collision_monitor_state"
+        transform_tolerance: 0.2
+        source_timeout: 1.0
+        base_shift_correction: true
+        stop_pub_timeout: 2.0
+        polygons: ["FootprintApproach"]
+        FootprintApproach:
+            type: "polygon"
+            action_type: "approach"
+            footprint_topic: "/local_costmap/published_footprint"
+            time_before_collision: 1.2
+            simulation_time_step: 0.1
+            # A single 2D LIDAR ring crossing two walking legs can return
+            # very few points; 6 was likely too high to ever arm against
+            # a person, unlike a solid wall/furniture obstacle.
+            min_points: 2
+            visualize: false
+            enabled: true
+        observation_sources: ["scan"]
+        scan:
+            type: "scan"
+            topic: "scan"
+            min_height: 0.15
+            max_height: 2.0
+            enabled: true
+
+waypoint_follower:
+    ros__parameters:
+        use_sim_time: true
+        loop_rate: 20
+        stop_on_failure: false
+        waypoint_task_executor_plugin: "wait_at_waypoint"
+        wait_at_waypoint:
+            plugin: "nav2_waypoint_follower::WaitAtWaypoint"
+            enabled: true
+            waypoint_pause_duration: 200
+
+lifecycle_manager_localization:
+    ros__parameters:
+        use_sim_time: true
+        autostart: true
+        node_names: ["map_server", "amcl"]
+
+lifecycle_manager_navigation:
+    ros__parameters:
+        use_sim_time: true
+        autostart: true
+        node_names: ["controller_server", "smoother_server", "planner_server",
+                      "behavior_server", "bt_navigator", "waypoint_follower",
+                      "velocity_smoother", "collision_monitor"]

@@ -1,0 +1,30 @@
+launch:
+- node:
+    pkg: joy
+    exec: joy_node
+    name: joy_node
+    output: screen
+    param:
+    - from: $(find-pkg-share arams_mission)/config/teleop_joy.yaml
+    - name: use_sim_time
+      value: true
+
+- node:
+    pkg: teleop_twist_joy
+    exec: teleop_node
+    name: teleop_node
+    output: screen
+    param:
+    - from: $(find-pkg-share arams_mission)/config/teleop_joy.yaml
+    - name: use_sim_time
+      value: true
+
+- node:
+    pkg: arams_mission
+    exec: joy_speed_control_node
+    name: joy_speed_control_node
+    output: screen
+    param:
+    - from: $(find-pkg-share arams_mission)/config/teleop_joy.yaml
+    - name: use_sim_time
+      value: true

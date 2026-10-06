@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>arams_mission</name>
+  <version>0.1.0</version>
+  <description>Mission nodes for the ARAMS hospital TurtleBot3 robotic nurse</description>
+  <maintainer email="calvaradoarriaga@gmail.com">Carlos Eduardo Alvarado Arriaga</maintainer>
+  <license>MIT</license>
+
+  <depend>rclpy</depend>
+  <depend>apriltag_msgs</depend>
+  <depend>arams_mission_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>nav2_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>std_srvs</depend>
+  <depend>cv_bridge</depend>
+
+  <exec_depend>apriltag_ros</exec_depend>
+  <exec_depend>joy</exec_depend>
+  <exec_depend>teleop_twist_joy</exec_depend>
+  <exec_depend>python3-opencv</exec_depend>
+  <!-- ultralytics isn't rosdep-resolvable: `pip install ultralytics`. -->
+  <!-- rosdep alone won't flag this: nav2_msgs/nav2_bringup need
+       `sudo apt install ros-jazzy-navigation2 ros-jazzy-nav2-bringup
+       ros-jazzy-nav2-lifecycle-manager ros-jazzy-nav2-amcl`, not
+       installed by default on a fresh Jazzy setup. -->
+  <exec_depend>nav2_bringup</exec_depend>
+  <exec_depend>nav2_lifecycle_manager</exec_depend>
+  <exec_depend>nav2_amcl</exec_depend>
+
+  <test_depend>ament_copyright</test_depend>
+  <test_depend>ament_flake8</test_depend>
+  <test_depend>ament_pep257</test_depend>
+  <test_depend>python3-pytest</test_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>

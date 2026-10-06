@@ -1,0 +1,11 @@
+orchestrator_node:
+    ros__parameters:
+        # Generous on purpose: mission_launch.yaml and tag_reader_launch.yaml
+        # are launched as two separate commands (see mission_launch.yaml's
+        # header comment), so this has to cover Nav2's own startup time plus
+        # however long it takes to notice and run the second command, not
+        # just tag-locking itself.
+        read_tag_timeout_sec: 180.0
+        detect_timeout_sec: 30.0
+        door_open_max_attempts: 2
+        detect_settle_count: 3

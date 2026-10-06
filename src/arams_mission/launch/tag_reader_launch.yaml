@@ -1,0 +1,25 @@
+launch:
+- node:
+    pkg: apriltag_ros
+    exec: apriltag_node
+    name: apriltag
+    output: screen
+    param:
+    - from: $(find-pkg-share arams_mission)/config/apriltag_41h12.yaml
+    - name: use_sim_time
+      value: true
+    remap:
+    - from: image_rect
+      to: /camera/image_raw
+    - from: camera_info
+      to: /camera/camera_info
+
+- node:
+    pkg: arams_mission
+    exec: tag_reader_node
+    name: tag_reader_node
+    output: screen
+    param:
+    - from: $(find-pkg-share arams_mission)/config/tag_reader.yaml
+    - name: use_sim_time
+      value: true

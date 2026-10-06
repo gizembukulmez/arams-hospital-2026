@@ -1,0 +1,4 @@
+tag_reader_node:
+    ros__parameters:
+        valid_ids: [1, 2, 3]
+        required_consistent_detections: 5

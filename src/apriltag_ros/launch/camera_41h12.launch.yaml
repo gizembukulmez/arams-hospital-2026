@@ -1,0 +1,25 @@
+launch:
+- arg:
+    name: image_topic
+    default: /camera/image_raw
+- arg:
+    name: camera_info_topic
+    default: /camera/camera_info
+- arg:
+    name: config
+    default: $(find-pkg-share apriltag_ros)/cfg/tags_41h12.yaml
+
+- node:
+    pkg: apriltag_ros
+    exec: apriltag_node
+    name: apriltag
+    output: screen
+    param:
+    - from: $(var config)
+    - name: use_sim_time
+      value: true
+    remap:
+    - from: image_rect
+      to: $(var image_topic)
+    - from: camera_info
+      to: $(var camera_info_topic)

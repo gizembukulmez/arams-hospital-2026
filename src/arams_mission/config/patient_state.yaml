@@ -1,0 +1,9 @@
+# weights_path here only resolves if the working directory happens to be the
+# package's install share dir. ROS2 param yaml files aren't launch-substituted.
+# mission_launch.yaml overrides this with the real
+# $(find-pkg-share arams_mission)/models/best.pt path for actual runs.
+patient_state_node:
+    ros__parameters:
+        camera_topic: /camera/image_raw
+        weights_path: models/best.pt
+        min_period_sec: 0.5

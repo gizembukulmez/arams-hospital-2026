@@ -1,0 +1,24 @@
+/**:
+    ros__parameters:
+        image_transport: raw       # image format
+        family: Standard41h12      # tag family name (tagStandard41h12)
+        size: 0.1                  # tag edge size in meter (5/13 of the 0.26 m panel)
+        max_hamming: 0             # maximum allowed hamming distance (corrected bits)
+        qos_profile: default       # optional qos_profile, "sensor_data", "default", or "system_default"
+
+        # see "apriltag.h" 'struct apriltag_detector' for more documentation on these optional parameters
+        detector:
+            threads: 1             # number of threads
+            decimate: 2.0          # decimate resolution for quad detection
+            blur: 0.0              # sigma of Gaussian blur for quad detection
+            refine: True           # snap to strong gradients
+            sharpening: 0.25       # sharpening of decoded images
+            debug: False           # write additional debugging images to current working directory
+
+        pose_estimation_method: "pnp"   # method for estimating the tag pose
+
+        # tags placed in turtlebot3_burger_example.wbt
+        tag:
+            ids: [0, 1, 2, 3]                       # tag IDs present in the world (3 = moving tag)
+            frames: [tag0, tag1, tag2, tag3]        # optional frame names
+            sizes: [0.1, 0.1, 0.1, 0.1]             # optional tag-specific edge size

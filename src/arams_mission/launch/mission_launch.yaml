@@ -1,0 +1,70 @@
+# Brings up Nav2 + the mission nodes (minus tag reading). Launch
+# tag_reader_launch.yaml separately, once this has settled (Nav2 active,
+# robot moving toward the pinboard); apriltag_node's continuous full-
+# resolution detection racing Nav2's own composable-node loading at startup
+# was causing intermittent Nav2 activation failures/instability, so tag
+# reading is kept out of this file rather than launched at the same instant.
+launch:
+- arg:
+    name: trial_log_path
+    default: ""
+    description: >-
+      Optional CSV path for logging navigation trial outcomes during repeated
+      doorway-reliability testing. Leave unset for normal mission runs.
+
+- include:
+    file: $(find-pkg-share nav2_bringup)/launch/bringup_launch.py
+    arg:
+    - name: map
+      value: $(find-pkg-share arams_mission)/config/maps/hospital_map.yaml
+    - name: params_file
+      value: $(find-pkg-share arams_mission)/config/nav2_params.yaml
+    - name: use_sim_time
+      value: "true"
+    - name: autostart
+      value: "true"
+
+- node:
+    pkg: arams_mission
+    exec: pinboard_approach_node
+    name: pinboard_approach_node
+    output: screen
+    param:
+    - from: $(find-pkg-share arams_mission)/config/pinboard_approach.yaml
+    - name: use_sim_time
+      value: true
+
+- node:
+    pkg: arams_mission
+    exec: room_navigator_node
+    name: room_navigator_node
+    output: screen
+    param:
+    - from: $(find-pkg-share arams_mission)/config/rooms.yaml
+    - name: use_sim_time
+      value: true
+    - name: trial_log_path
+      value: $(var trial_log_path)
+
+- node:
+    pkg: arams_mission
+    exec: patient_state_node
+    name: patient_state_node
+    output: screen
+    param:
+    - from: $(find-pkg-share arams_mission)/config/patient_state.yaml
+    - name: weights_path
+      value: $(find-pkg-share arams_mission)/models/best.pt
+    - name: use_sim_time
+      value: true
+
+- node:
+    pkg: arams_mission
+    exec: orchestrator_node
+    name: orchestrator_node
+    output: screen
+    param:
+    - from: $(find-pkg-share arams_mission)/config/rooms.yaml
+    - from: $(find-pkg-share arams_mission)/config/orchestrator.yaml
+    - name: use_sim_time
+      value: true

@@ -1,0 +1,24 @@
+# YOLO dataset config (ultralytics format).
+#
+# Directory layout expected:
+#
+# dataset/
+#   images/train/*.jpg
+#   images/val/*.jpg
+#   labels/train/*.txt   <- one .txt per image, YOLO format: class x_center y_center w h (normalized 0-1)
+#   labels/val/*.txt
+#
+# The current models/best.pt was trained on this path's dataset (202 images
+# labeled in Roboflow from collect_images captures). Repoint this if you
+# retrain on a different/extended dataset.
+
+path: /home/ca2324s/arams_dataset/labeled
+train: images/train
+val: images/val
+
+# Class indices must match the label files exactly in this order, and must
+# match arams_mission.patient_detector.PatientState's values.
+names:
+  0: in_bed
+  1: on_floor
+  2: standing

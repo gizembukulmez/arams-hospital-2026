@@ -1,0 +1,32 @@
+/**:
+    ros__parameters:
+        image_transport: raw       # image format
+        family: Standard41h12      # tag family name (tagStandard41h12)
+        size: 0.1                  # tag edge size in meter (5/13 of the 0.26 m panel)
+        max_hamming: 0             # maximum allowed hamming distance (corrected bits)
+        qos_profile: default       # optional qos_profile, "sensor_data", "default", or "system_default"
+
+        detector:
+            threads: 1
+            # 1.0 (full resolution), not the tutorial default 2.0: the
+            # pinboard tag is small (0.1m) and, after retreating the
+            # approach pose to ~2.2m to fix vertical FOV clipping (see
+            # pinboard_approach.yaml), decimate:2.0 would leave under
+            # 11px across the tag at worst case, too thin to decode
+            # reliably. Detection only runs for a few frames per mission,
+            # not continuously, so the extra CPU cost is cheap here.
+            decimate: 1.0
+            blur: 0.0
+            refine: True
+            sharpening: 0.25
+            debug: False
+
+        pose_estimation_method: "pnp"
+
+        # Tags present in arams_hospital_2.wbt: the randomized pinboard plus
+        # the three static per-door markers, all IDs 1-3 (see
+        # hospital_supervisor.py ARUCO_IDS). No moving tag in this world.
+        tag:
+            ids: [1, 2, 3]
+            frames: [tag1, tag2, tag3]
+            sizes: [0.1, 0.1, 0.1]

@@ -1,0 +1,18 @@
+# Room approach poses in the map frame, keyed by room id (matches the
+# pinboard/door AprilTag IDs). room_ids sits under the wildcard node key so
+# both room_navigator_node and orchestrator_node read the same list;
+# keeping it in one place avoids the two drifting apart (orchestrator_node
+# needs it to build its DoorClient).
+#
+# Recorded live via `ros2 topic echo /amcl_pose --once` / `ros2 run
+# tf2_ros tf2_echo map base_link`, taken just inside each room's
+# doorway, facing the patient, against config/maps/hospital_map.yaml.
+/**:
+    ros__parameters:
+        room_ids: [1, 2, 3]
+
+room_navigator_node:
+    ros__parameters:
+        room_1: {x: -10.008, y: -5.259, yaw: 1.915}
+        room_2: {x: -5.062, y: -2.929, yaw: 1.754}
+        room_3: {x: 0.495, y: -2.388, yaw: 1.647}

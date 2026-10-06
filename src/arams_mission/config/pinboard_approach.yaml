@@ -1,0 +1,19 @@
+# Pinboard-viewing pose in the map frame, so the robot faces the AprilTag
+# pinboard before tag_reader_node can lock in an ID; it isn't guaranteed to
+# be in view from the spawn pose. Recorded via `ros2 run tf2_ros tf2_echo
+# map base_link`.
+#
+# Standoff retreated from ~1.72m to ~2.2m (same yaw, moved straight back):
+# the camera sits at z=0.09 with no tilt while the tag sits at z=0.8, so at
+# 1.72m the tag's top edge was already past the camera's vertical FOV
+# boundary with zero positioning error; getting closer (well within
+# xy_goal_tolerance's normal variance) pushes it further out of frame.
+# 2.2m keeps margin even at the tolerance's worst-case-closest arrival.
+# x/y below are a computed starting point (retreated along the original
+# pose's facing direction); re-verify live (tag fully visible in
+# /camera/image_raw, then tf2_echo) before trusting them as final.
+pinboard_approach_node:
+    ros__parameters:
+        x: -1.146
+        y: -10.678
+        yaw: -1.790
