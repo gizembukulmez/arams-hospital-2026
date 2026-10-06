@@ -1,0 +1,111 @@
+#VRML_SIM R2025a utf8
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackground.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/floors/protos/CircleArena.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/robots/robotis/turtlebot/protos/TurtleBot3Burger.proto"
+
+WorldInfo {
+}
+Viewpoint {
+  orientation -0.1575126256511971 -0.08494873361928638 0.9838564353689747 4.11725790533141
+  position 1.1427598534810843 3.7100081683039825 1.2027188206190578
+}
+TexturedBackground {
+}
+TexturedBackgroundLight {
+}
+CircleArena {
+  floorTileSize 0.1 0.1
+}
+Solid {
+  translation 0.0498381 0.0292707 -426556.5759968472
+  children [
+    DEF ball Shape {
+      appearance PBRAppearance {
+        baseColor 0 1 1
+        roughness 1
+        metalness 0
+      }
+      geometry Sphere {
+        radius 0.14
+        subdivision 3
+      }
+    }
+    Solid {
+    }
+  ]
+  physics Physics {
+  }
+  linearVelocity 0 0 -2892.772800000395
+}
+DEF wall Solid {
+  translation -0.182969 0.101423 0.04
+  rotation 0 0 1 -2.3561953071795863
+  children [
+    DEF wall Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [
+            ""
+          ]
+        }
+        metalness 0
+      }
+      geometry Box {
+        size 2 0.05 0.1
+      }
+    }
+  ]
+  name "wall"
+}
+Solid {
+  translation -0.348152 -0.266797 0.04
+  rotation 0 0 1 -0.523595307179586
+  children [
+    USE wall
+  ]
+  name "solid(1)"
+}
+Solid {
+  translation 0 0 0.18
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+        }
+      }
+      geometry Sphere {
+        radius 0.1
+      }
+    }
+  ]
+  name "solid(3)"
+}
+TurtleBot3Burger {
+  hidden position_0_0 -1.4500891277325705e-11
+  hidden position_0_1 -9.649150402875972e-12
+  hidden position_0_2 2.1944458860576316e-06
+  hidden position2_0_2 0.0002791412486055105
+  hidden position3_0_2 -2.685281427144423e-08
+  hidden linearVelocity_0 -3.889259832590972e-12 3.188103250003493e-13 4.31736945484686e-14
+  hidden angularVelocity_0 1.1439186638626279e-14 1.926871807632146e-12 -9.611885997523164e-12
+  hidden linearVelocity_8 -4.711721198686094e-12 3.745975019755312e-17 -2.1524840726251898e-14
+  hidden angularVelocity_8 -5.625240197054579e-16 -1.4308531809633373e-10 -9.608711762279513e-12
+  hidden linearVelocity_9 -3.130291473574969e-12 -4.585027422625911e-16 -1.916428118808415e-14
+  hidden angularVelocity_9 2.0974744462351114e-14 -9.457130074811566e-11 -9.609164720398935e-12
+  hidden rotation_10 0.0078611610351372 0.9999690960742695 -9.509778168745382e-05 0.00027914987645192825
+  hidden linearVelocity_10 -3.976878691599634e-12 7.773035751762381e-13 5.55616256353984e-14
+  hidden angularVelocity_10 -1.943258807661962e-10 -9.942196062881164e-10 6.0302332066222285e-24
+  translation -0.25999975617727084 -4.834935341712287e-09 -0.00024773920598959026
+  rotation -0.002111647678653962 -0.9999977704539597 5.584879863430693e-06 0.0046419467800439184
+}
+Solid {
+  translation 0.271645 0.404108 -1.33227e-15
+  rotation 0 0 1 1.5708
+  children [
+    USE wall
+    USE wall
+  ]
+  name "solid(2)"
+}

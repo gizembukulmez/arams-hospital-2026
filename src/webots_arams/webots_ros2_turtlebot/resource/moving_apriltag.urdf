@@ -1,0 +1,9 @@
+<?xml version="1.0" ?>
+<robot name="moving_apriltag">
+    <webots>
+        <plugin type="webots_ros2_turtlebot.apriltag_oscillator.AprilTagOscillator">
+            <amplitude>0.4</amplitude>
+            <period>60.0</period>
+        </plugin>
+    </webots>
+</robot>

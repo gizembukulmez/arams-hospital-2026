@@ -1,0 +1,643 @@
+#VRML_SIM R2025a utf8
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackground.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/floors/protos/RectangleArena.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/apartment_structure/protos/Door.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/hospital/protos/HospitalBed.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/humans/pedestrian/protos/Pedestrian.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/cabinet/protos/Cabinet.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/tables/protos/Table.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/tables/protos/Desk.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/chairs/protos/Chair.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/plants/protos/PottedTree.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/robots/robotis/turtlebot/protos/TurtleBot3Burger.proto"
+
+WorldInfo {
+  info [
+    "Pflegehaus Zeise Krankenheim"
+    "Mastermodul Challenge mit TurtleBot3"
+  ]
+  title "Pflegehaus Challenge"
+  basicTimeStep 16
+}
+Viewpoint {
+  orientation 0.05492089869942989 0.9969923286372534 -0.05468081495839021 1.573867895059064
+  position 8.982262687077477e-18 2.299459247891834e-15 41.423375247837214
+}
+TexturedBackground {
+}
+DirectionalLight {
+  ambientIntensity 1
+  direction -0.5 -1 5
+  intensity 2
+}
+RectangleArena {
+  translation 0.0090132 0.062 0
+  name "main_arena"
+  floorSize 18 15
+  floorAppearance PBRAppearance {
+    baseColor 0.85098 0.85098 0.878431
+    baseColorMap ImageTexture {
+      url [
+        "../photos/boden.png"
+      ]
+    }
+    roughness 0.4
+    emissiveColorMap ImageTexture {
+    }
+  }
+  wallThickness 0.2
+  wallHeight 2.4
+}
+Cabinet {
+  translation -3.80526 5.76932 -7.10539e-15
+  rotation 0 0 1 -2.6179953071795863
+  name "cabinet(2)"
+}
+Cabinet {
+  translation -3.40526 5.07652 -7.10539e-15
+  rotation 0 0 1 -2.6179953071795863
+  name "cabinet(8)"
+}
+Cabinet {
+  translation -3.01526 4.40104 -7.10539e-15
+  rotation 0 0 1 -2.6179953071795863
+  name "cabinet(9)"
+}
+Cabinet {
+  translation -2.62526 3.72556 -7.10539e-15
+  rotation 0 0 1 -2.6179953071795863
+  name "cabinet(10)"
+}
+Cabinet {
+  translation -2.23526 3.05008 -7.10539e-15
+  rotation 0 0 1 -2.6179953071795863
+  name "cabinet(11)"
+}
+Desk {
+  translation -4.94773 -6.34916 0
+  name "desk(1)"
+}
+Desk {
+  translation 8.16981 2.5536 1.42109e-14
+  name "desk(2)"
+}
+Solid {
+  translation -8.09817 2.5101 -7.15871e-13
+  children [
+    Desk {
+    }
+    Desk {
+      name "desk(1)"
+    }
+  ]
+  name "solid(1)"
+}
+Robot {
+  name "hospital_supervisor"
+  controller "hospital_supervisor"
+  supervisor TRUE
+}
+Solid {
+  translation -8.5 1.5 1.2
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.9 0.95 0.95
+        roughness 0.6
+      }
+      geometry Box {
+        size 1 0.2 2.4
+      }
+    }
+  ]
+  name "wall_left_pillar"
+  boundingObject Box {
+    size 1 0.2 2.4
+  }
+}
+Solid {
+  translation -6.875 1.5 1.2
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.9 0.95 0.95
+        roughness 0.6
+      }
+      geometry Box {
+        size 2.25 0.2 2.4
+      }
+    }
+  ]
+  name "wall_r1_to_sep"
+  boundingObject Box {
+    size 2.25 0.2 2.4
+  }
+}
+Solid {
+  translation -2.625 1.5 1.2
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.9 0.95 0.95
+        roughness 0.6
+      }
+      geometry Box {
+        size 4.25 0.2 2.4
+      }
+    }
+  ]
+  name "wall_sep_to_d2_left"
+  boundingObject Box {
+    size 4.25 0.2 2.4
+  }
+}
+Solid {
+  translation 2.625 1.5 1.2
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.9 0.95 0.95
+        roughness 0.6
+      }
+      geometry Box {
+        size 4.25 0.2 2.4
+      }
+    }
+  ]
+  name "wall_d2_to_sep_right"
+  boundingObject Box {
+    size 4.25 0.2 2.4
+  }
+}
+Solid {
+  translation 6.875 1.5 1.2
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.9 0.95 0.95
+        roughness 0.6
+      }
+      geometry Box {
+        size 2.25 0.2 2.4
+      }
+    }
+  ]
+  name "wall_sep_to_r3"
+  boundingObject Box {
+    size 2.25 0.2 2.4
+  }
+}
+Solid {
+  translation 8.5 1.5 1.2
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.9 0.95 0.95
+        roughness 0.6
+      }
+      geometry Box {
+        size 1 0.2 2.4
+      }
+    }
+  ]
+  name "wall_right_pillar"
+  boundingObject Box {
+    size 1 0.2 2.4
+  }
+}
+Solid {
+  translation -3 4.5 1.2
+  rotation 0 0 1 0.5236
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.9 0.95 0.95
+        roughness 0.6
+      }
+      geometry Box {
+        size 0.2 7 2.4
+      }
+    }
+  ]
+  name "wall_separator_1_2"
+  boundingObject Box {
+    size 0.2 7 2.4
+  }
+}
+Solid {
+  translation -7.28452 -4.50301 1.2
+  rotation 0 0 1 0.5236
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.9 0.95 0.95
+        roughness 0.6
+      }
+      geometry Box {
+        size 0.2 7 2.4
+      }
+    }
+  ]
+  name "wall_separator_1_2(1)"
+  boundingObject Box {
+    size 0.2 7 2.4
+  }
+}
+Solid {
+  translation 7.36329 -4.50474 1.2
+  rotation 0 0 -1 0.5236
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.85098 0.85098 0.878431
+        roughness 0.6
+      }
+      geometry Box {
+        size 0.2 7 2.4
+      }
+    }
+  ]
+  name "wall_separator_2_3"
+  boundingObject Box {
+    size 0.2 7 2.4
+  }
+}
+Solid {
+  translation 3 4.5 1.2
+  rotation 0 0 1 -0.5236
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.9 0.95 0.95
+        roughness 0.6
+      }
+      geometry Box {
+        size 0.2 7 2.4
+      }
+    }
+  ]
+  name "wall_separator_2_3(1)"
+  boundingObject Box {
+    size 0.2 7 2.4
+  }
+}
+DEF DOOR_1 Door {
+  translation -5.26 1.5 0
+  rotation 0 0 1 -1.5708
+  name "door_room1"
+  position -7.405842560617757e-05
+}
+DEF DOOR_2 Door {
+  translation 0 1.5 0
+  rotation 0 0 1 -1.5708
+  name "door_room2"
+  position -7.477652271958846e-05
+}
+DEF DOOR_3 Door {
+  translation 5.26 1.5 0
+  rotation 0 0 1 -1.5708
+  name "door_room3"
+  position -7.477652271939456e-05
+}
+Solid {
+  children [
+    Shape {
+    }
+  ]
+}
+Solid {
+  translation 0.131949 -7.45632 0.7999999999999999
+  children [
+    DEF pinnboard Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [
+            "../photos/Tag_family_36h11_ID_2.png"
+          ]
+        }
+        roughness 0.8
+      }
+      geometry Box {
+        size 0.5 0.05 0.5
+      }
+    }
+  ]
+  name "pinboard_backing"
+  boundingObject Box {
+    size 1.5 0.05 1
+  }
+}
+Solid {
+  translation 6.17182 1.39697 0.8
+  children [
+    DEF pinnboard Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [
+            "../photos/Tag_family_36h11_ID_3.png"
+          ]
+        }
+        roughness 0.8
+      }
+      geometry Box {
+        size 0.5 0.05 0.5
+      }
+    }
+  ]
+  name "pinboard_backing(1)"
+  boundingObject Box {
+    size 1.5 0.05 1
+  }
+}
+Solid {
+  translation 0.946979 1.43861 0.8
+  children [
+    DEF pinnboard Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [
+            "../photos/Tag_family_36h11_ID_2.png"
+          ]
+        }
+        roughness 0.8
+      }
+      geometry Box {
+        size 0.5 0.1 0.5
+      }
+    }
+  ]
+  name "pinboard_backing(2)"
+  boundingObject Box {
+    size 1.5 0.05 1
+  }
+}
+Solid {
+  translation -4.35745 1.40552 0.8
+  children [
+    DEF pinnboard Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [
+            "../photos/Tag_family_36h11_ID_1.png"
+          ]
+        }
+        roughness 0.8
+      }
+      geometry Box {
+        size 0.5 0.05 0.5
+      }
+    }
+  ]
+  name "pinboard_backing(3)"
+  boundingObject Box {
+    size 1.5 0.1 1
+  }
+}
+Solid {
+  translation -6.5 6 0.25
+  rotation 0 0 1 1.5708
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.368627 0.360784 0.392157
+        baseColorMap ImageTexture {
+          url [
+            ""
+          ]
+        }
+      }
+      geometry Box {
+        size 1 2.5 0.5
+      }
+    }
+  ]
+  name "platform_bed_1"
+  boundingObject Box {
+    size 1.6 2.5 0.5
+  }
+}
+Solid {
+  translation 0.0199982 6.54 0.25
+  rotation 0 0 1 1.5708
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.368627 0.360784 0.392157
+        baseColorMap ImageTexture {
+          url [
+            ""
+          ]
+        }
+      }
+      geometry Box {
+        size 1 2.5 0.5
+      }
+    }
+  ]
+  name "platform_bed_1(1)"
+  boundingObject Box {
+    size 1.6 2.5 0.5
+  }
+}
+Solid {
+  translation 6.62 6 0.25
+  rotation 0 0 1 1.5708
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.368627 0.360784 0.392157
+        baseColorMap ImageTexture {
+          url [
+            ""
+          ]
+        }
+      }
+      geometry Box {
+        size 1 2.5 0.5
+      }
+    }
+  ]
+  name "platform_bed_1(2)"
+  boundingObject Box {
+    size 1.6 2.5 0.5
+  }
+}
+DEF BED_1 HospitalBed {
+  translation -6.5 6 0.5
+  rotation 0 0 1 1.5708
+  name "bed_1"
+}
+DEF BED_2 HospitalBed {
+  translation 0 6.5 0.5
+  rotation 0 0 1 1.5708
+  name "bed_2"
+}
+DEF BED_3 HospitalBed {
+  translation 6.5 6 0.5
+  rotation 0 0 1 1.5708
+  name "bed_3"
+}
+DEF PATIENT_1 Pedestrian {
+  translation -6.91 6 0.8
+  rotation -6.88391e-07 1 -1.72486e-06 -1.5707953071795862
+  name "patient_1"
+  controller ""
+  shirtColor 1 1 1
+}
+DEF PATIENT_2 Pedestrian {
+  translation -2.75266 6.54943 0.155537
+  rotation -0.4377317972319541 0.8628566003037754 -0.2527238829321328 -1.7177653071795866
+  name "patient_2"
+  controller ""
+  shirtColor 1 1 1
+}
+DEF PATIENT_3 Pedestrian {
+  translation 7.98694 4.11279 1.1
+  name "patient_3"
+  controller ""
+  shirtColor 1 1 1
+}
+DEF NURSE Pedestrian {
+  translation -0.9873 -1.74178 1.18
+  name "nurse_walking"
+  shirtColor 0.384314 0.627451 0.917647
+  pantsColor 0.384314 0.627451 0.917647
+}
+Cabinet {
+  translation 2.3534 3.69123 0
+  rotation 0 0 -1 -2.6179953071795863
+  name "cabinet(5)"
+}
+Cabinet {
+  translation 3.1034 4.99023 0
+  rotation 0 0 -1 -2.6179953071795863
+  name "cabinet(7)"
+}
+Cabinet {
+  translation 2.7284 4.34073 0
+  rotation 0 0 -1 -2.6179953071795863
+  name "cabinet(6)"
+}
+Cabinet {
+  translation 3.16763 4.54558 -1.06581e-14
+  rotation 0 0 1 -0.5236053071795865
+}
+Cabinet {
+  translation 3.97263 5.93984 -1.06581e-14
+  rotation 0 0 1 -0.5236053071795865
+  name "cabinet(3)"
+}
+Cabinet {
+  translation -6.60744 -5.4518 -1.24345e-14
+  rotation 0 0 1 0.523592
+  name "cabinet(12)"
+}
+Cabinet {
+  translation -8.21744 -2.66328 -1.24345e-14
+  rotation 0 0 1 0.523592
+  name "cabinet(16)"
+}
+Cabinet {
+  translation -7.01744 -4.74168 -1.24345e-14
+  rotation 0 0 1 0.523592
+  name "cabinet(13)"
+}
+Cabinet {
+  translation -7.81744 -3.35608 -1.24345e-14
+  rotation 0 0 1 0.523592
+  name "cabinet(15)"
+}
+Cabinet {
+  translation -7.41244 -4.05754 -1.24345e-14
+  rotation 0 0 1 0.523592
+  name "cabinet(14)"
+}
+Table {
+  translation 6.20221 -3.00859 0
+  rotation 0 0 1 -0.523595307179586
+  size 1 4 0.74
+}
+Cabinet {
+  translation 3.56763 5.23838 -1.06581e-14
+  rotation 0 0 1 -0.5236053071795865
+  name "cabinet(1)"
+}
+Cabinet {
+  translation 2.78263 3.87876 -1.06581e-14
+  rotation 0 0 1 -0.5236053071795865
+  name "cabinet(4)"
+}
+Chair {
+  translation 7.69516 2.4397 0
+}
+Chair {
+  translation 6.52026 -1.55561 0
+  rotation 0 0 1 -0.523595307179586
+  name "chair(1)"
+}
+Chair {
+  translation 6.17526 -2.15315 0
+  rotation 0 0 1 -0.523595307179586
+  name "chair(2)"
+}
+Chair {
+  translation 5.80526 -2.79399 0
+  rotation 0 0 1 -0.523595307179586
+  name "chair(3)"
+}
+Chair {
+  translation 5.38526 -3.52143 0
+  rotation 0 0 1 -0.523595307179586
+  name "chair(4)"
+}
+Chair {
+  translation 5.94039 -4.19989 0
+  rotation 0 0 1 2.618
+  name "chair(5)"
+}
+Chair {
+  translation 7.23539 -1.95692 0
+  rotation 0 0 1 2.618
+  name "chair(7)"
+}
+Chair {
+  translation 6.81539 -2.68436 0
+  rotation 0 0 1 2.618
+  name "chair(8)"
+}
+Chair {
+  translation 6.38039 -3.43781 0
+  rotation 0 0 1 2.618
+  name "chair(6)"
+}
+PottedTree {
+  translation 1.71747 6.52817 1.42109e-14
+}
+PottedTree {
+  translation -8.58747 6.83346 3.55271e-15
+  name "potted tree(5)"
+}
+PottedTree {
+  translation 4.14191 -6.65132 0
+  name "potted tree(1)"
+}
+TurtleBot3Burger {
+  translation -0.00293678 -6.94465 1.42109e-14
+}
+PottedTree {
+  translation 8.64762 0.908938 7.10543e-15
+  name "potted tree(3)"
+}
+PottedTree {
+  translation 8.44849 6.80255 -3.55271e-15
+  name "potted tree(2)"
+}
+PottedTree {
+  translation 3.1446 1.07341 -1.42109e-14
+  name "potted tree(6)"
+}
+PottedTree {
+  translation -8.38618 0.867381 -2.94875e-13
+  name "potted tree(4)"
+}

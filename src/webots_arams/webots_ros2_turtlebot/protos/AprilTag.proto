@@ -1,0 +1,41 @@
+#VRML_SIM R2023b utf8
+# An AprilTag fiducial marker rendered as a flat, matte textured panel.
+#
+# The texture is a tagStandard41h12 image (9 cells) surrounded by a 2-cell
+# white quiet zone, i.e. a 13-cell square. The detector "size" parameter
+# (edge of the tag's black border) therefore equals 5/13 of the panel edge:
+#   size = 5/13 * size.x   (with the default 0.26 m panel -> 0.10 m).
+#
+# The tag is drawn on the two large faces of the box (normals +/-Y). Rotate
+# the node so one of those faces points toward the camera. Texture filtering
+# is disabled so the marker stays crisp.
+PROTO AprilTag [
+  field SFVec3f    translation 0 0 0
+  field SFRotation rotation    0 0 1 0
+  field SFString   name        "april tag"
+  field SFVec3f    size        0.26 0.01 0.26   # width(X) thickness(Y) height(Z)
+  field MFString   texture     []               # path to the tag PNG
+]
+{
+  Solid {
+    translation IS translation
+    rotation IS rotation
+    name IS name
+    model "AprilTag"
+    children [
+      Shape {
+        appearance PBRAppearance {
+          baseColorMap ImageTexture {
+            url IS texture
+            filtering 0
+          }
+          roughness 1
+          metalness 0
+        }
+        geometry Box {
+          size IS size
+        }
+      }
+    ]
+  }
+}
